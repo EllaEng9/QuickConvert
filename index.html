@@ -10,6 +10,8 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/gif.js.optimized/dist/gif.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.4.2/mammoth.browser.min.js"></script>
   <style>
     body {
       background: linear-gradient(to right, #83a4d4, #b6fbff);
@@ -219,14 +221,21 @@
 
   <div class="d-flex justify-content-center flex-wrap gap-2">
     <button onclick="convertTextToPdf()" class="btn btn-custom">Convert Text to PDF</button>
+    <div id="textPdfDownload" class="text-center mt-4"></div>
+
   </div>
 
   <hr class="my-4">
 
   <!-- 上传 PDF -->
-  <input type="file" id="pdfToTextInput" class="form-control mb-3" accept="application/pdf" onchange="extractTextFromPdf()" />
+  <hr class="my-4">
 
-  <div id="pdfExtractedText" class="p-3 bg-light rounded" style="min-height:150px;"></div>
+<h4 class="text-center mb-3">Extract Text from PDF</h4>
+
+<input type="file" id="pdfToTextInput" class="form-control mb-3" accept="application/pdf" onchange="extractTextFromPdf()" />
+
+<div id="pdfExtractedText" class="p-3 bg-light rounded mt-3" style="min-height:200px;"></div>
+
 </div>
 
     
@@ -434,10 +443,12 @@ function convertTextToPdf() {
   link.className = 'btn btn-custom mt-3';
   link.textContent = 'Download PDF';
   
-  const preview = document.getElementById('pdfExtractedText');
+  // 插入到新的textPdfDownload区
+  const preview = document.getElementById('textPdfDownload');
   preview.innerHTML = '';
   preview.appendChild(link);
 }
+
 
 // --- Extract Text from PDF ---
 
