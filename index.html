@@ -182,6 +182,20 @@
   <!-- Text Conversion Tab -->
   <div id="textTab" class="tab-content hidden">
     <div class="section">
+  <h2 class="text-center mb-3">Quick Tools Index</h2>
+
+  <ul class="list-unstyled text-center">
+    <li><a href="#mergePdfsSection" class="text-primary">Merge PDFs</a></li>
+    <li><a href="#jsonCsvTxtSection" class="text-primary">JSON ⇄ CSV ⇄ TXT Conversion</a></li>
+    <li><a href="#formattersSection" class="text-primary">Format JSON & HTML</a></li>
+    <li><a href="#txtToPdfSection" class="text-primary">TXT ➔ PDF Conversion</a></li>
+    <li><a href="#wordCountSection" class="text-primary">Word Count</a></li>
+    <li><a href="#markdownSection" class="text-primary">Markdown ➔ HTML / PDF Conversion</a></li>
+    <li><a href="#extractPdfTextSection" class="text-primary">Extract Text from PDF</a></li>
+  </ul>
+</div>
+
+    <div id="mergePdfsSection" class="section">
   <h2 class="text-center mb-3">Merge PDFs</h2>
   
   <input type="file" id="mergePdfInput" class="form-control mb-3" accept="application/pdf" multiple />
@@ -197,7 +211,7 @@
 </div>
 
     
-    <div class="section">
+    <div id="jsonCsvTxtSection" class="section">
       <h2 class="text-center mb-3">JSON ⇄ CSV ⇄ TXT Conversion</h2>
       <!-- For JSON/CSV/TXT -->
 <div class="mb-2">
@@ -213,7 +227,7 @@
       <div id="textOutput" class="mt-3"></div>
     </div>
 
-    <div class="section">
+    <div id="formattersSection" class="section">
   <h2 class="text-center mb-3">Format JSON & HTML</h2>
 
   <textarea id="formatInput" placeholder="Paste JSON or HTML code here..."></textarea>
@@ -227,7 +241,7 @@
 </div>
 
 
-    <div class="section">
+    <div id="txtToPdfSection" class="section">
   <h2 class="text-center mb-3">Text / Word / PDF Conversion</h2>
 
   <!-- 上传 TXT 或 DOCX -->
@@ -246,7 +260,7 @@
 
 </div>
 
-    <div class="section">
+    <div id="extractPdfTextSection" class="section">
   <h2 class="text-center mb-3">Extract Text from PDF</h2>
 
   <input type="file" id="pdfToTextInput" class="form-control mb-3" accept="application/pdf" onchange="extractTextFromPdf()" />
@@ -254,7 +268,7 @@
   <div id="pdfExtractedText" class="p-3 bg-light rounded" style="min-height:200px;"></div>
 </div>
 
-    <div class="section">
+    <div id="wordCountSection" class="section">
   <h2 class="text-center mb-3">Word Count</h2>
 
   <textarea id="wordCountInput" placeholder="Type or paste your text here..."></textarea>
@@ -267,8 +281,8 @@
 </div>
 
  
-    <div class="section">
-      <h2 class="text-center mb-3">Markdown -> HTML Conversion</h2>
+    <div id="markdownSection" class="section">
+      <h2 class="text-center mb-3">Markdown -> HTML/PDF Conversion</h2>
       <!-- For Markdown -->
 <div class="mb-2">
   <input type="file" id="markdownFileInput" accept=".md,.txt" onchange="handleFileUpload('markdownFileInput','markdownInput')" />
