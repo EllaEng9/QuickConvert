@@ -101,122 +101,139 @@
   </div>
 
   <!-- Image Conversion Tab -->
-  <div id="imageTab" class="tab-content">
-    <div class="row g-4">
+<div id="imageTab" class="tab-content">
+<div class="section">
+  <h2 class="text-center mb-3">Quick Tools Index</h2>
 
-      <!-- Convert Single Image -->
-      <div class="col-md-6">
-        <div class="section">
-          <h2 class="text-center mb-3">Convert Single Image</h2>
-          <input type="file" id="singleFileInput" class="form-control mb-3" accept="image/png, image/jpeg, image/webp" />
-          <select id="singleFormatSelect" class="form-select mb-3">
-            <option value="image/jpeg">Convert to JPG</option>
-            <option value="image/png">Convert to PNG</option>
-            <option value="image/webp">Convert to WEBP</option>
-          </select>
-          <div class="mb-3">
-            <label>Resize (optional):</label>
-            <div class="d-flex gap-2">
-              <input type="number" id="resizeWidth" class="form-control" placeholder="Width (px)" />
-              <input type="number" id="resizeHeight" class="form-control" placeholder="Height (px)" />
-            </div>
-          </div>
-          <button onclick="previewSingleImage()" class="btn btn-custom mb-3">Preview</button>
-          <div id="singlePreview" class="preview"></div>
-          <div id="singleDownload" class="text-center mt-3"></div>
-        </div>
-      </div>
-
-      <!-- Convert Multiple Images -->
-      <div class="col-md-6">
-        <div class="section">
-          <h2 class="text-center mb-3">Convert Multiple Images</h2>
-          <input type="file" id="batchFileInput" class="form-control mb-3" multiple accept="image/png, image/jpeg, image/webp" />
-          <select id="batchFormatSelect" class="form-select mb-3">
-            <option value="image/jpeg">Convert to JPG</option>
-            <option value="image/png">Convert to PNG</option>
-            <option value="image/webp">Convert to WEBP</option>
-          </select>
-          <div class="mb-3">
-            <label>Batch Resize (optional):</label>
-            <div class="d-flex gap-2">
-              <input type="number" id="batchResizeWidth" class="form-control" placeholder="Width (px)" />
-              <input type="number" id="batchResizeHeight" class="form-control" placeholder="Height (px)" />
-            </div>
-          </div>
-          <button onclick="convertBatchImages()" class="btn btn-custom mb-3">Batch Convert</button>
-          <div id="batchPreview" class="preview d-flex flex-wrap justify-content-center"></div>
-        </div>
-      </div>
-
-      <!-- Compress Image -->
-      <div class="col-md-6">
-        <div class="section">
-          <h2 class="text-center mb-3">Compress Image</h2>
-          <input type="file" id="compressFileInput" class="form-control mb-3" accept="image/png, image/jpeg, image/webp" />
-          <select id="compressQuality" class="form-select mb-3">
-            <option value="0.9">90% Quality</option>
-            <option value="0.7">70% Quality</option>
-            <option value="0.5">50% Quality</option>
-            <option value="0.3">30% Quality</option>
-          </select>
-          <button onclick="compressImage()" class="btn btn-custom mb-3">Compress</button>
-          <div id="compressPreview" class="preview"></div>
-          <div id="compressDownload" class="text-center mt-3"></div>
-        </div>
-      </div>
-
-      <!-- PDF to JPG -->
-      <div class="col-md-6">
-        <div class="section">
-          <h2 class="text-center mb-3">PDF to JPG</h2>
-          <input type="file" id="pdfFileInput" class="form-control mb-3" accept="application/pdf" />
-          <button onclick="convertPdfToJpg()" class="btn btn-custom mb-3">Convert PDF</button>
-          <div id="pdfPreview" class="preview"></div>
-          <div id="pdfDownload" class="text-center mt-3"></div>
-        </div>
-      </div>
-
-      <div id="resizeImageSection" class="section">
-  <h2 class="text-center mb-3">Resize Image</h2>
-
-  <input type="file" id="resizeImageInput" class="form-control mb-3" accept="image/png, image/jpeg, image/webp" />
-
-  <div class="d-flex gap-2 mb-3">
-    <input type="number" id="resizeWidthInput" class="form-control" placeholder="Width (px)">
-    <input type="number" id="resizeHeightInput" class="form-control" placeholder="Height (px)">
-  </div>
-
-  <div class="text-center">
-    <button onclick="resizeImage()" class="btn btn-custom mb-3">Resize</button>
-  </div>
-
-  <div id="resizeImagePreview" class="preview text-center"></div>
+  <ul class="list-unstyled text-center">
+    <li><a href="#convertSingleImageSection" class="text-primary">Convert Single Image</a></li>
+    <li><a href="#convertMultipleImagesSection" class="text-primary">ConvertMultipleImages</a></li>
+    <li><a href="#compressImageSection" class="text-primary">Compress Image</a></li>
+    <li><a href="#resizeImageSection" class="text-primary">Resize Image</a></li>
+    <li><a href="#pdfToJPGSection" class="text-primary">PDF to JPG</a></li>
+    <li><a href="#imagesToPDFSection" class="text-primary">Images to PDF</a></li>
+  </ul>
 </div>
 
-      <div id="imagesToPdfSection" class="section">
-  <h2 class="text-center mb-3">Images to PDF</h2>
+  
+  <div class="row g-4">
 
-  <input type="file" id="imagesPdfInput" class="form-control mb-3" multiple accept="image/png, image/jpeg, image/webp" />
-
-  <!-- 小提示 -->
-  <p class="text-muted small text-center mt-2">
-    Recommended: Upload up to 15-20 images. Each image under 2MB. Total PDF size under 50MB for best performance.
-  </p>
-
-  <div class="text-center">
-    <button onclick="convertImagesToPdf()" class="btn btn-custom mb-3">Convert to PDF</button>
-  </div>
-
-  <div id="imagesPdfPreview" class="preview d-flex flex-wrap justify-content-center"></div>
-</div>
-
-
+    <!-- Convert Single Image -->
+    <div class="col-md-6">
+      <div id="convertSingleImageSection" class="section">
+        <h2 class="text-center mb-3">Convert Single Image</h2>
+        <input type="file" id="singleFileInput" class="form-control mb-3" accept="image/png, image/jpeg, image/webp" />
+        <select id="singleFormatSelect" class="form-select mb-3">
+          <option value="image/jpeg">Convert to JPG</option>
+          <option value="image/png">Convert to PNG</option>
+          <option value="image/webp">Convert to WEBP</option>
+        </select>
+        <div class="mb-3">
+          <label>Resize (optional):</label>
+          <div class="d-flex gap-2">
+            <input type="number" id="resizeWidth" class="form-control" placeholder="Width (px)" />
+            <input type="number" id="resizeHeight" class="form-control" placeholder="Height (px)" />
+          </div>
+        </div>
+        <button onclick="previewSingleImage()" class="btn btn-custom mb-3">Preview</button>
+        <div id="singlePreview" class="preview"></div>
+        <div id="singleDownload" class="text-center mt-3"></div>
+      </div>
     </div>
+
+    <!-- Convert Multiple Images -->
+    <div class="col-md-6">
+      <div id="convertMultipleImagesSection" class="section">
+        <h2 class="text-center mb-3">Convert Multiple Images</h2>
+        <input type="file" id="batchFileInput" class="form-control mb-3" multiple accept="image/png, image/jpeg, image/webp" />
+        <select id="batchFormatSelect" class="form-select mb-3">
+          <option value="image/jpeg">Convert to JPG</option>
+          <option value="image/png">Convert to PNG</option>
+          <option value="image/webp">Convert to WEBP</option>
+        </select>
+        <div class="mb-3">
+          <label>Batch Resize (optional):</label>
+          <div class="d-flex gap-2">
+            <input type="number" id="batchResizeWidth" class="form-control" placeholder="Width (px)" />
+            <input type="number" id="batchResizeHeight" class="form-control" placeholder="Height (px)" />
+          </div>
+        </div>
+        <button onclick="convertBatchImages()" class="btn btn-custom mb-3">Batch Convert</button>
+        <div id="batchPreview" class="preview d-flex flex-wrap justify-content-center"></div>
+      </div>
+    </div>
+
+    <!-- Compress Image -->
+    <div class="col-md-6">
+      <div id="compressImageSection" class="section">
+        <h2 class="text-center mb-3">Compress Image</h2>
+        <input type="file" id="compressFileInput" class="form-control mb-3" accept="image/png, image/jpeg, image/webp" />
+        <select id="compressQuality" class="form-select mb-3">
+          <option value="0.9">90% Quality</option>
+          <option value="0.7">70% Quality</option>
+          <option value="0.5">50% Quality</option>
+          <option value="0.3">30% Quality</option>
+        </select>
+        <button onclick="compressImage()" class="btn btn-custom mb-3">Compress</button>
+        <div id="compressPreview" class="preview"></div>
+        <div id="compressDownload" class="text-center mt-3"></div>
+      </div>
+    </div>
+
+    <!-- Resize Image -->
+    <div class="col-md-6">
+      <div id="resizeImageSection" class="section">
+        <h2 class="text-center mb-3">Resize Image</h2>
+        <input type="file" id="resizeImageInput" class="form-control mb-3" accept="image/png, image/jpeg, image/webp" />
+        <div class="d-flex gap-2 mb-3">
+          <input type="number" id="resizeWidthInput" class="form-control" placeholder="Width (px)">
+          <input type="number" id="resizeHeightInput" class="form-control" placeholder="Height (px)">
+        </div>
+        <div class="text-center">
+          <button onclick="resizeImage()" class="btn btn-custom mb-3">Resize</button>
+        </div>
+        <div id="resizeImagePreview" class="preview text-center"></div>
+      </div>
+    </div>
+
   </div>
+
+  <!-- 单独排一行的大模块区 -->
+  <div class="row g-4 mt-4">
+
+    <!-- PDF to JPG -->
+    <div class="col-12">
+      <div id="pdfToJPGSection" class="section">
+        <h2 class="text-center mb-3">PDF to JPG</h2>
+        <input type="file" id="pdfFileInput" class="form-control mb-3" accept="application/pdf" />
+        <button onclick="convertPdfToJpg()" class="btn btn-custom mb-3">Convert PDF</button>
+        <div id="pdfPreview" class="preview"></div>
+        <div id="pdfDownload" class="text-center mt-3"></div>
+      </div>
+    </div>
+
+    <!-- Images to PDF -->
+    <div class="col-12">
+      <div id="imagesToPDFSection" class="section">
+        <h2 class="text-center mb-3">Images to PDF</h2>
+        <input type="file" id="imagesPdfInput" class="form-control mb-3" multiple accept="image/png, image/jpeg, image/webp" />
+        <p class="text-muted small text-center mt-2">
+          Recommended: Upload up to 15-20 images. Each image under 2MB. Total PDF size under 50MB for best performance. JPG, PNG, and WebP formats are supported.
+        </p>
+        <div class="text-center">
+          <button onclick="convertImagesToPdf()" class="btn btn-custom mb-3">Convert to PDF</button>
+        </div>
+        <div id="imagesPdfPreview" class="preview d-flex flex-wrap justify-content-center"></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+  
   <!-- Text Conversion Tab -->
   <div id="textTab" class="tab-content hidden">
-    <div class="section">
+  <div class="section">
   <h2 class="text-center mb-3">Quick Tools Index</h2>
 
   <ul class="list-unstyled text-center">
