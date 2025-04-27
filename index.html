@@ -145,6 +145,33 @@ footer {
   margin-bottom: 20px;
 }
 
+.tool-chip {
+  display: inline-block;
+  background: #f0f4ff; /* 淡蓝色 */
+  color: #2575fc; /* 蓝色字体 */
+  font-weight: bold;
+  padding: 10px 18px;
+  margin: 8px;
+  border-radius: 30px;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  font-size: 16px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.tool-chip i {
+  margin-right: 6px;
+  font-size: 18px;
+  vertical-align: middle;
+}
+
+.tool-chip:hover {
+  background: #2575fc;
+  color: #fff;
+  box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+  transform: translateY(-3px);
+}
+
   </style>
 </head>
 
@@ -164,36 +191,30 @@ footer {
   <h2 class="text-center mb-3">Quick Tools Index(Image)</h2>
 
   <div class="row g-4 text-center">
-      <div class="col-md-4">
-        <a href="#convertSingleImageSection" class="tool-card">
-          <i class="fas fa-image"></i> Convert Single Image
-        </a>
-      </div>
-      <div class="col-md-4">
-        <a href="#convertMultipleImagesSection" class="tool-card">
-          <i class="fas fa-images"></i> Convert Multiple Images
-        </a>
-      </div>
-      <div class="col-md-4">
-        <a href="#compressImageSection" class="tool-card">
-          <i class="fas fa-compress-arrows-alt"></i> Compress Image
-        </a>
-      </div>
-      <div class="col-md-4">
-        <a href="#resizeImageSection" class="tool-card">
-          <i class="fas fa-expand-arrows-alt"></i> Resize Image
-        </a>
-      </div>
-      <div class="col-md-4">
-        <a href="#pdfToJPGSection" class="tool-card">
-          <i class="fas fa-file-pdf"></i> PDF to JPG
-        </a>
-      </div>
-      <div class="col-md-4">
-        <a href="#imagesToPDFSection" class="tool-card">
-          <i class="fas fa-file-upload"></i> Images to PDF
-        </a>
-      </div>
+      <!-- Chips列表开始 -->
+    <a href="#convertSingleImageSection" class="tool-chip">
+      <i class="fas fa-image"></i> Convert Single Image
+    </a>
+
+    <a href="#convertMultipleImagesSection" class="tool-chip">
+      <i class="fas fa-images"></i> Convert Multiple Images
+    </a>
+
+    <a href="#compressImageSection" class="tool-chip">
+      <i class="fas fa-compress-arrows-alt"></i> Compress Images
+    </a>
+
+    <a href="#resizeImageSection" class="tool-chip">
+      <i class="fas fa-expand-arrows-alt"></i> Resize Images
+    </a>
+
+    <a href="#pdfToJPGSection" class="tool-chip">
+      <i class="fas fa-file-pdf"></i> PDF to JPG
+    </a>
+
+    <a href="#imagesToPDFSection" class="tool-chip">
+      <i class="fas fa-file-upload"></i> Images to PDF
+    </a>
   </div>
 </div>
 
