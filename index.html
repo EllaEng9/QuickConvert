@@ -358,6 +358,37 @@ footer {
     <li><a href="#wordCountSection" class="text-primary">Word Count</a></li>
     <li><a href="#markdownSection" class="text-primary">Markdown ➔ HTML / PDF Conversion</a></li>  
   </ul>
+    <div class="chips-container">
+
+    <a href="#mergePdfsSection" class="tool-chip">
+      <i class="fas fa-copy"></i> Merge PDFs
+    </a>
+
+    <a href="#jsonCsvTxtSection" class="tool-chip">
+      <i class="fas fa-code"></i> JSON ⇄ CSV ⇄ TXT
+    </a>
+
+    <a href="#formattersSection" class="tool-chip">
+      <i class="fas fa-cogs"></i> Format JSON/HTML
+    </a>
+
+    <a href="#txtToPdfSection" class="tool-chip">
+      <i class="fas fa-file-alt"></i> Text/Word to PDF
+    </a>
+
+    <a href="#extractPdfTextSection" class="tool-chip">
+      <i class="fas fa-file-contract"></i> PDF to Text
+    </a>
+
+    <a href="#wordCountSection" class="tool-chip">
+      <i class="fas fa-keyboard"></i> Word Count
+    </a>
+
+    <a href="#markdownSection" class="tool-chip">
+      <i class="fas fa-file-code"></i> Markdown to HTML/PDF
+    </a>
+
+  </div>
 </div>
 
     <div id="mergePdfsSection" class="section">
@@ -407,7 +438,7 @@ footer {
 
 
     <div id="txtToPdfSection" class="section">
-  <h2 class="text-center mb-3"><i class="fas fa-file-alt"></i>Text / Word -》PDF Conversion</h2>
+  <h2 class="text-center mb-3"><i class="fas fa-file-alt"></i>Text / Word to PDF Conversion</h2>
 
   <!-- 上传 TXT 或 DOCX -->
   <input type="file" id="textWordFileInput" class="form-control mb-3" accept=".txt,.docx" onchange="handleTextOrWordUpload()" />
@@ -447,7 +478,7 @@ footer {
 
  
     <div id="markdownSection" class="section">
-      <h2 class="text-center mb-3"><i class="fas fa-file-pdf"></i>Markdown -> HTML/PDF Conversion</h2>
+      <h2 class="text-center mb-3"><i class="fas fa-file-pdf"></i>Markdown to HTML/PDF Conversion</h2>
       <!-- For Markdown -->
 <div class="mb-2">
   <input type="file" id="markdownFileInput" accept=".md,.txt" onchange="handleFileUpload('markdownFileInput','markdownInput')" />
