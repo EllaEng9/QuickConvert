@@ -200,9 +200,6 @@
   <input type="file" id="markdownFileInput" accept=".md,.txt" onchange="handleFileUpload('markdownFileInput','markdownInput')" />
 </div>
       <textarea id="markdownInput" placeholder="Paste your Markdown here..."></textarea>
-      <div class="d-flex flex-wrap gap-2 justify-content-center">
-        <button onclick="convertMarkdownToHtml()" class="btn btn-custom">Markdown to HTML</button>
-      </div>
       <div id="markdownOutput" class="p-3 bg-light rounded mt-3" style="min-height:200px;"></div>
 
     </div>
@@ -311,11 +308,18 @@ function convertTxtToJson() {
 }
 
 // Markdown -> HTML
+// 实时监听Markdown输入
+document.getElementById('markdownInput').addEventListener('input', function() {
+  convertMarkdownToHtml();
+});
+
+// Markdown -> HTML 转换函数
 function convertMarkdownToHtml() {
   const markdown = document.getElementById('markdownInput').value;
   const html = marked.parse(markdown);
   document.getElementById('markdownOutput').innerHTML = html;
 }
+
 
 // --- Image Conversions (Compress, Crop, Remove BG, PDF to JPG) ---
 function previewSingleImage() {
