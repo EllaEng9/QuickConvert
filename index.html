@@ -179,6 +179,10 @@
   <div id="textTab" class="tab-content hidden">
     <div class="section">
       <h2 class="text-center mb-3">JSON ⇄ CSV ⇄ TXT Conversion</h2>
+      <!-- For JSON/CSV/TXT -->
+<div class="mb-2">
+  <input type="file" id="textFileInput" accept=".json,.csv,.txt" onchange="handleFileUpload('textFileInput','textInput')" />
+</div>
       <textarea id="textInput" placeholder="Paste your text here..."></textarea>
       <div class="d-flex flex-wrap gap-2 justify-content-center">
         <button onclick="convertJsonToCsv()" class="btn btn-custom">JSON to CSV</button>
@@ -191,6 +195,10 @@
 
     <div class="section">
       <h2 class="text-center mb-3">Markdown ⇄ HTML Conversion</h2>
+      <!-- For Markdown -->
+<div class="mb-2">
+  <input type="file" id="markdownFileInput" accept=".md,.txt" onchange="handleFileUpload('markdownFileInput','markdownInput')" />
+</div>
       <textarea id="markdownInput" placeholder="Paste your Markdown here..."></textarea>
       <div class="d-flex flex-wrap gap-2 justify-content-center">
         <button onclick="convertMarkdownToHtml()" class="btn btn-custom">Markdown to HTML</button>
@@ -216,23 +224,62 @@ function showTab(tab) {
 }
 
 // --- Text Conversions ---
+// --- Tab Switching ---
+function showTab(tab) {
+  document.getElementById('imageTab').classList.add('hidden');
+  document.getElementById('textTab').classList.add('hidden');
+  if (tab === 'image') {
+    document.getElementById('imageTab').classList.remove('hidden');
+  } else {
+    document.getElementById('textTab').classList.remove('hidden');
+  }
+}
+
+// --- Upload File for Text Conversion ---
+function handleFileUpload(inputId, textareaId) {
+  const file = document.getElementById(inputId).files[0];
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    document.getElementById(textareaId).value = e.target.result;
+  };
+  reader.readAsText(file);
+}
+
+// --- Text Conversions ---
+
+// JSON -> CSV
 function convertJsonToCsv() {
   try {
-    const json = JSON.parse(document.getElementById('textInput').value);
-    const csv = [Object.keys(json[0]).join(",")].concat(json.map(obj => Object.values(obj).join(","))).join("\n");
-    document.getElementById('textOutput').innerHTML = `<pre>${csv}</pre>`;
+    const input = JSON.parse(document.getElementById('textInput').value);
+    if (!Array.isArray(input)) {
+      alert("Input must be a JSON array (e.g., [{}, {}]) to convert to CSV.");
+      return;
+    }
+    const csvRows = [];
+    const headers = Object.keys(input[0]);
+    csvRows.push(headers.join(","));
+    input.forEach(obj => {
+      const values = headers.map(header => JSON.stringify(obj[header] ?? ""));
+      csvRows.push(values.join(","));
+    });
+    document.getElementById('textOutput').innerHTML = `<pre>${csvRows.join("\n")}</pre>`;
   } catch (e) {
     alert("Invalid JSON format.");
   }
 }
 
+// CSV -> JSON
 function convertCsvToJson() {
   try {
-    const csv = document.getElementById('textInput').value.trim().split("\n");
-    const headers = csv[0].split(",");
-    const json = csv.slice(1).map(row => {
-      const values = row.split(",");
-      return headers.reduce((obj, header, i) => (obj[header] = values[i], obj), {});
+    const csv = document.getElementById('textInput').value.trim();
+    const lines = csv.split("\n");
+    const headers = lines[0].split(",");
+    const json = lines.slice(1).map(line => {
+      const values = line.split(",");
+      return headers.reduce((obj, header, i) => {
+        obj[header] = values[i];
+        return obj;
+      }, {});
     });
     document.getElementById('textOutput').innerHTML = `<pre>${JSON.stringify(json, null, 2)}</pre>`;
   } catch (e) {
@@ -240,6 +287,7 @@ function convertCsvToJson() {
   }
 }
 
+// JSON -> TXT
 function convertJsonToTxt() {
   try {
     const json = JSON.parse(document.getElementById('textInput').value);
@@ -250,6 +298,7 @@ function convertJsonToTxt() {
   }
 }
 
+// TXT -> JSON
 function convertTxtToJson() {
   try {
     const txt = document.getElementById('textInput').value;
@@ -260,10 +309,11 @@ function convertTxtToJson() {
   }
 }
 
+// Markdown -> HTML
 function convertMarkdownToHtml() {
   const markdown = document.getElementById('markdownInput').value;
   const html = marked(markdown);
-  document.getElementById('markdownOutput').innerHTML = `<pre>${html}</pre>`;
+  document.getElementById('markdownOutput').innerHTML = html;
 }
 
 // --- Image Conversions (Compress, Crop, Remove BG, PDF to JPG) ---
