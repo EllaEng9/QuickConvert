@@ -162,35 +162,7 @@
         </div>
       </div>
 
-      <!-- Crop Image -->
-      <div class="col-md-6">
-        <div class="section">
-          <h2 class="text-center mb-3">Crop Image</h2>
-          <input type="file" id="cropFileInput" class="form-control mb-3" accept="image/png, image/jpeg, image/webp" />
-          <div class="mb-3">
-            <button onclick="startCrop()" class="btn btn-custom mb-2">Start Crop</button>
-            <button onclick="cropImage()" class="btn btn-custom mb-2">Crop & Download</button>
-          </div>
-          <div id="cropPreview" class="preview"></div>
-          <div id="cropDownload" class="text-center mt-3"></div>
-        </div>
-      </div>
-
-      <!-- Create GIF -->
-      <div class="col-md-6">
-        <div class="section">
-          <h2 class="text-center mb-3">Create GIF</h2>
-          <input type="file" id="gifFileInput" class="form-control mb-3" multiple accept="image/png, image/jpeg, image/webp" />
-          <select id="gifDelay" class="form-select mb-3">
-            <option value="100">Fast (100ms)</option>
-            <option value="200" selected>Normal (200ms)</option>
-            <option value="400">Slow (400ms)</option>
-          </select>
-          <button onclick="createGif()" class="btn btn-custom mb-3">Create GIF</button>
-          <div id="gifPreview" class="preview"></div>
-          <div id="gifDownload" class="text-center mt-3"></div>
-        </div>
-      </div>
+      // removed crop image and create gif for now, since they are not working properly
 
 
       <!-- PDF to JPG -->
