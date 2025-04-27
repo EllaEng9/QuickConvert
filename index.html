@@ -313,7 +313,7 @@ function convertTxtToJson() {
 // Markdown -> HTML
 function convertMarkdownToHtml() {
   const markdown = document.getElementById('markdownInput').value;
-  const html = marked(markdown);
+  const html = marked.parse(markdown);
   document.getElementById('markdownOutput').innerHTML = html;
 }
 
