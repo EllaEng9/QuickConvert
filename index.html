@@ -13,6 +13,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.4.2/mammoth.browser.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/js-beautify@1.14.0/js/lib/beautify-html.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <style>
     body {
       background: linear-gradient(to right, #83a4d4, #b6fbff);
@@ -274,6 +275,10 @@
 </div>
       <textarea id="markdownInput" placeholder="Paste your Markdown here..."></textarea>
       <button onclick="convertMarkdownToHtml()" class="btn btn-custom">Convert Markdown to HTML</button>
+      <div class="d-flex justify-content-center mt-3">
+  <button onclick="convertMarkdownToPdf()" class="btn btn-custom">Convert Markdown to PDF</button>
+</div>
+
       <div id="markdownOutput" class="p-3 bg-light rounded mt-3" style="min-height:200px;"></div>
 
     </div>
@@ -542,7 +547,30 @@ function convertMarkdownToHtml() {
   const html = marked.parse(markdown);
   document.getElementById('markdownOutput').innerHTML = html;
 }
+// --- Markdown to PDF ---
+function convertMarkdownToPdf() {
+  const markdown = document.getElementById('markdownInput').value;
+  if (!markdown.trim()) {
+    alert('Please paste or type some Markdown first!');
+    return;
+  }
 
+  const htmlContent = marked.parse(markdown);
+
+  const container = document.createElement('div');
+  container.innerHTML = htmlContent;
+  container.style.padding = '20px'; // 小padding防止PDF内容太靠边
+
+  html2pdf()
+    .from(container)
+    .set({
+      margin: 10,
+      filename: 'markdown_converted.pdf',
+      html2canvas: { scale: 2 },
+      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    })
+    .save();
+}
 
 // --- Image Conversions (Compress, Crop, Remove BG, PDF to JPG) ---
 function previewSingleImage() {
