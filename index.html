@@ -194,12 +194,13 @@
     </div>
 
     <div class="section">
-      <h2 class="text-center mb-3">Markdown ⇄ HTML Conversion</h2>
+      <h2 class="text-center mb-3">Markdown -> HTML Conversion</h2>
       <!-- For Markdown -->
 <div class="mb-2">
   <input type="file" id="markdownFileInput" accept=".md,.txt" onchange="handleFileUpload('markdownFileInput','markdownInput')" />
 </div>
       <textarea id="markdownInput" placeholder="Paste your Markdown here..."></textarea>
+      <button onclick="convertMarkdownToHtml()" class="btn btn-custom">Convert Markdown to HTML</button>
       <div id="markdownOutput" class="p-3 bg-light rounded mt-3" style="min-height:200px;"></div>
 
     </div>
@@ -239,10 +240,6 @@ function handleFileUpload(inputId, textareaId) {
   const reader = new FileReader();
   reader.onload = function(e) {
     document.getElementById(textareaId).value = e.target.result;
-    // ➡️ 如果是markdownInput，自动刷新预览！
-    if (textareaId === "markdownInput") {
-      convertMarkdownToHtml();
-    }
   };
   reader.readAsText(file);
 }
