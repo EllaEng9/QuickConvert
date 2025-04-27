@@ -181,6 +181,9 @@
   <h2 class="text-center mb-3">Merge PDFs</h2>
   
   <input type="file" id="mergePdfInput" class="form-control mb-3" accept="application/pdf" multiple />
+  <p class="text-muted small text-center mt-2">
+    Recommended: Upload up to 10 PDFs. Each PDF ideally under 30MB. Total combined size under 200MB for best performance.
+  </p>
 
   <div class="d-flex justify-content-center">
     <button onclick="mergePdfs()" class="btn btn-custom">Merge PDFs</button>
@@ -206,6 +209,27 @@
       <div id="textOutput" class="mt-3"></div>
     </div>
 
+    <div class="section">
+  <h2 class="text-center mb-3">Text / Word / PDF Conversion</h2>
+
+  <!-- 上传 TXT 或 DOCX -->
+  <input type="file" id="textWordFileInput" class="form-control mb-3" accept=".txt,.docx" onchange="handleTextOrWordUpload()" />
+
+  <textarea id="textInputArea" placeholder="Paste your text here or upload TXT/DOCX..." class="mb-3"></textarea>
+
+  <div class="d-flex justify-content-center flex-wrap gap-2">
+    <button onclick="convertTextToPdf()" class="btn btn-custom">Convert Text to PDF</button>
+  </div>
+
+  <hr class="my-4">
+
+  <!-- 上传 PDF -->
+  <input type="file" id="pdfToTextInput" class="form-control mb-3" accept="application/pdf" onchange="extractTextFromPdf()" />
+
+  <div id="pdfExtractedText" class="p-3 bg-light rounded" style="min-height:150px;"></div>
+</div>
+
+    
     <div class="section">
       <h2 class="text-center mb-3">Markdown -> HTML Conversion</h2>
       <!-- For Markdown -->
@@ -360,6 +384,84 @@ function convertTxtToJson() {
   }
 }
 
+// --- Text / Word Upload and Convert to PDF ---
+
+function handleTextOrWordUpload() {
+  const file = document.getElementById('textWordFileInput').files[0];
+  const reader = new FileReader();
+
+  if (file.name.endsWith('.txt')) {
+    reader.onload = function(e) {
+      document.getElementById('textInputArea').value = e.target.result;
+    };
+    reader.readAsText(file);
+  } else if (file.name.endsWith('.docx')) {
+    // Use mammoth.js to parse .docx to text
+    const reader = new FileReader();
+    reader.onload = function(event) {
+      mammoth.extractRawText({ arrayBuffer: event.target.result })
+        .then(function(result) {
+          document.getElementById('textInputArea').value = result.value;
+        })
+        .catch(function(err) {
+          console.error(err);
+          alert("Failed to parse DOCX file.");
+        });
+    };
+    reader.readAsArrayBuffer(file);
+  } else {
+    alert('Unsupported file type. Please upload TXT or DOCX.');
+  }
+}
+
+function convertTextToPdf() {
+  const text = document.getElementById('textInputArea').value;
+  if (!text.trim()) {
+    alert('Please enter or upload some text!');
+    return;
+  }
+
+  const pdf = new jspdf.jsPDF();
+  const lines = pdf.splitTextToSize(text, 180);
+  pdf.text(lines, 10, 10);
+
+  const blob = pdf.output('blob');
+  const url = URL.createObjectURL(blob);
+
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = 'converted_text.pdf';
+  link.className = 'btn btn-custom mt-3';
+  link.textContent = 'Download PDF';
+  
+  const preview = document.getElementById('pdfExtractedText');
+  preview.innerHTML = '';
+  preview.appendChild(link);
+}
+
+// --- Extract Text from PDF ---
+
+async function extractTextFromPdf() {
+  const file = document.getElementById('pdfToTextInput').files[0];
+  if (!file) {
+    alert('Please upload a PDF file!');
+    return;
+  }
+
+  const arrayBuffer = await file.arrayBuffer();
+  const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+  let fullText = '';
+
+  for (let i = 1; i <= pdf.numPages; i++) {
+    const page = await pdf.getPage(i);
+    const content = await page.getTextContent();
+    const strings = content.items.map(item => item.str).join(' ');
+    fullText += strings + '\n\n';
+  }
+
+  document.getElementById('pdfExtractedText').textContent = fullText;
+}
+  
 // Markdown -> HTML
 // 实时监听Markdown输入
 document.getElementById('markdownInput').addEventListener('input', function() {
