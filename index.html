@@ -440,14 +440,18 @@ function compressImage() {
 }
 
 // --- Crop Image with Cropper.js ---
+// --- Crop Image (优化版上传即裁剪) ---
 let cropper;
-function startCrop() {
-  const file = document.getElementById("cropFileInput").files[0];
+
+document.getElementById("cropFileInput").addEventListener("change", function(event) {
+  const file = event.target.files[0];
   const preview = document.getElementById("cropPreview");
+  const downloadArea = document.getElementById("cropDownload");
   preview.innerHTML = "";
+  downloadArea.innerHTML = "";
 
   if (!file) {
-    alert("Please upload an image to crop.");
+    alert("Please upload an image.");
     return;
   }
 
@@ -469,14 +473,14 @@ function startCrop() {
     });
   };
   reader.readAsDataURL(file);
-}
+});
 
 function cropImage() {
   const downloadArea = document.getElementById("cropDownload");
   downloadArea.innerHTML = "";
 
   if (!cropper) {
-    alert("Please select and start cropping first!");
+    alert("Please upload and crop an image first!");
     return;
   }
 
@@ -492,17 +496,18 @@ function cropImage() {
   }, 'image/jpeg');
 }
 
-// --- Create GIF ---
+
+// --- Create GIF (优化版自动resize+loading提示) ---
 function createGif() {
   const files = document.getElementById("gifFileInput").files;
   const delay = parseInt(document.getElementById("gifDelay").value);
   const preview = document.getElementById("gifPreview");
   const downloadArea = document.getElementById("gifDownload");
-  preview.innerHTML = "";
+  preview.innerHTML = "Creating GIF, please wait...";
   downloadArea.innerHTML = "";
 
   if (!files.length) {
-    alert("Please upload multiple images to create GIF.");
+    alert("Please upload multiple images to create a GIF.");
     return;
   }
 
@@ -518,7 +523,23 @@ function createGif() {
     reader.onload = function(e) {
       const img = new Image();
       img.onload = function() {
-        gif.addFrame(img, { delay: delay });
+        const canvas = document.createElement("canvas");
+        const ctx = canvas.getContext("2d");
+
+        // resize to max 800px width (preserve aspect ratio)
+        let maxWidth = 800;
+        let ratio = img.width / img.height;
+        if (img.width > maxWidth) {
+          canvas.width = maxWidth;
+          canvas.height = maxWidth / ratio;
+        } else {
+          canvas.width = img.width;
+          canvas.height = img.height;
+        }
+
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+        gif.addFrame(canvas, { delay: delay });
         loadedImages++;
         if (loadedImages === files.length) {
           gif.render();
@@ -531,6 +552,7 @@ function createGif() {
 
   gif.on('finished', function(blob) {
     const url = URL.createObjectURL(blob);
+    preview.innerHTML = "";
     const gifImg = new Image();
     gifImg.src = url;
     gifImg.style.maxWidth = "100%";
@@ -545,6 +567,7 @@ function createGif() {
     downloadArea.appendChild(link);
   });
 }
+
 
 // --- PDF to JPG ---
 function convertPdfToJpg() {
