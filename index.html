@@ -384,6 +384,207 @@ function convertBatchImages() {
 
 // Compress, Crop, Remove BG, and PDF to JPG
 // （这几部分在前面我们已经发过代码，这里继续沿用！）
+// --- Compress Image ---
+function compressImage() {
+  const file = document.getElementById("compressFileInput").files[0];
+  const quality = parseFloat(document.getElementById("compressQuality").value);
+  const preview = document.getElementById("compressPreview");
+  const downloadArea = document.getElementById("compressDownload");
+  preview.innerHTML = "";
+  downloadArea.innerHTML = "";
+
+  if (!file) {
+    alert("Please upload an image.");
+    return;
+  }
+
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const img = new Image();
+    img.onload = function() {
+      const canvas = document.createElement("canvas");
+      canvas.width = img.width;
+      canvas.height = img.height;
+      canvas.getContext("2d").drawImage(img, 0, 0);
+
+      canvas.toBlob(function(blob) {
+        const url = URL.createObjectURL(blob);
+        const compressedImg = new Image();
+        compressedImg.src = url;
+        compressedImg.style.maxWidth = "100%";
+        compressedImg.style.borderRadius = "10px";
+        preview.appendChild(compressedImg);
+
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = "compressed.jpg";
+        link.className = "btn btn-custom mt-3";
+        link.textContent = "Download Compressed Image";
+        downloadArea.appendChild(link);
+      }, 'image/jpeg', quality);
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+// --- Crop Image ---
+function cropImage() {
+  const file = document.getElementById("cropFileInput").files[0];
+  const preview = document.getElementById("cropPreview");
+  const downloadArea = document.getElementById("cropDownload");
+  preview.innerHTML = "";
+  downloadArea.innerHTML = "";
+
+  if (!file) {
+    alert("Please upload an image.");
+    return;
+  }
+
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const img = new Image();
+    img.onload = function() {
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d");
+
+      // 简单裁剪：中心区域一半
+      const cropWidth = img.width / 2;
+      const cropHeight = img.height / 2;
+      const startX = img.width / 4;
+      const startY = img.height / 4;
+
+      canvas.width = cropWidth;
+      canvas.height = cropHeight;
+      ctx.drawImage(img, startX, startY, cropWidth, cropHeight, 0, 0, cropWidth, cropHeight);
+
+      canvas.toBlob(function(blob) {
+        const url = URL.createObjectURL(blob);
+        const croppedImg = new Image();
+        croppedImg.src = url;
+        croppedImg.style.maxWidth = "100%";
+        croppedImg.style.borderRadius = "10px";
+        preview.appendChild(croppedImg);
+
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = "cropped.jpg";
+        link.className = "btn btn-custom mt-3";
+        link.textContent = "Download Cropped Image";
+        downloadArea.appendChild(link);
+      }, 'image/jpeg');
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+// --- Remove Background (Simple Version) ---
+function removeBackground() {
+  const file = document.getElementById("removeBgFileInput").files[0];
+  const preview = document.getElementById("removeBgPreview");
+  const downloadArea = document.getElementById("removeBgDownload");
+  preview.innerHTML = "";
+  downloadArea.innerHTML = "";
+
+  if (!file) {
+    alert("Please upload an image.");
+    return;
+  }
+
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const img = new Image();
+    img.onload = function() {
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d");
+
+      canvas.width = img.width;
+      canvas.height = img.height;
+      ctx.drawImage(img, 0, 0);
+
+      const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      const data = imgData.data;
+
+      // 把接近白色的像素设为透明
+      for (let i = 0; i < data.length; i += 4) {
+        if (data[i] > 200 && data[i + 1] > 200 && data[i + 2] > 200) {
+          data[i + 3] = 0;
+        }
+      }
+      ctx.putImageData(imgData, 0, 0);
+
+      canvas.toBlob(function(blob) {
+        const url = URL.createObjectURL(blob);
+        const outputImg = new Image();
+        outputImg.src = url;
+        outputImg.style.maxWidth = "100%";
+        outputImg.style.borderRadius = "10px";
+        preview.appendChild(outputImg);
+
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = "removed-bg.png";
+        link.className = "btn btn-custom mt-3";
+        link.textContent = "Download Image";
+        downloadArea.appendChild(link);
+      }, 'image/png');
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+// --- PDF to JPG ---
+function convertPdfToJpg() {
+  const file = document.getElementById("pdfFileInput").files[0];
+  const preview = document.getElementById("pdfPreview");
+  const downloadArea = document.getElementById("pdfDownload");
+  preview.innerHTML = "";
+  downloadArea.innerHTML = "";
+
+  if (!file) {
+    alert("Please upload a PDF.");
+    return;
+  }
+
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const pdfData = new Uint8Array(e.target.result);
+    pdfjsLib.getDocument({ data: pdfData }).promise.then(function(pdf) {
+      pdf.getPage(1).then(function(page) {
+        const viewport = page.getViewport({ scale: 2.0 });
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.height = viewport.height;
+        canvas.width = viewport.width;
+
+        const renderContext = {
+          canvasContext: ctx,
+          viewport: viewport
+        };
+        page.render(renderContext).promise.then(function() {
+          canvas.toBlob(function(blob) {
+            const url = URL.createObjectURL(blob);
+            const pdfImg = new Image();
+            pdfImg.src = url;
+            pdfImg.style.maxWidth = "100%";
+            pdfImg.style.borderRadius = "10px";
+            preview.appendChild(pdfImg);
+
+            const link = document.createElement("a");
+            link.href = url;
+            link.download = "pdf-page.jpg";
+            link.className = "btn btn-custom mt-3";
+            link.textContent = "Download JPG";
+            downloadArea.appendChild(link);
+          }, 'image/jpeg');
+        });
+      });
+    });
+  };
+  reader.readAsArrayBuffer(file);
+}
 
 </script>
 
