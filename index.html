@@ -177,6 +177,41 @@
         </div>
       </div>
 
+      <div id="resizeImageSection" class="section">
+  <h2 class="text-center mb-3">Resize Image</h2>
+
+  <input type="file" id="resizeImageInput" class="form-control mb-3" accept="image/png, image/jpeg, image/webp" />
+
+  <div class="d-flex gap-2 mb-3">
+    <input type="number" id="resizeWidthInput" class="form-control" placeholder="Width (px)">
+    <input type="number" id="resizeHeightInput" class="form-control" placeholder="Height (px)">
+  </div>
+
+  <div class="text-center">
+    <button onclick="resizeImage()" class="btn btn-custom mb-3">Resize</button>
+  </div>
+
+  <div id="resizeImagePreview" class="preview text-center"></div>
+</div>
+
+      <div id="imagesToPdfSection" class="section">
+  <h2 class="text-center mb-3">Images to PDF</h2>
+
+  <input type="file" id="imagesPdfInput" class="form-control mb-3" multiple accept="image/png, image/jpeg, image/webp" />
+
+  <!-- 小提示 -->
+  <p class="text-muted small text-center mt-2">
+    Recommended: Upload up to 15-20 images. Each image under 2MB. Total PDF size under 50MB for best performance.
+  </p>
+
+  <div class="text-center">
+    <button onclick="convertImagesToPdf()" class="btn btn-custom mb-3">Convert to PDF</button>
+  </div>
+
+  <div id="imagesPdfPreview" class="preview d-flex flex-wrap justify-content-center"></div>
+</div>
+
+
     </div>
   </div>
   <!-- Text Conversion Tab -->
@@ -858,6 +893,98 @@ function createGif() {
     downloadArea.appendChild(link);
   });
 }
+
+// --- Resize Image ---
+
+function resizeImage() {
+  const fileInput = document.getElementById('resizeImageInput');
+  const width = parseInt(document.getElementById('resizeWidthInput').value);
+  const height = parseInt(document.getElementById('resizeHeightInput').value);
+  const preview = document.getElementById('resizeImagePreview');
+
+  preview.innerHTML = '';
+
+  if (!fileInput.files.length || !width || !height) {
+    alert('Please upload an image and specify width and height.');
+    return;
+  }
+
+  const reader = new FileReader();
+  reader.onload = function(event) {
+    const img = new Image();
+    img.onload = function() {
+      const canvas = document.createElement('canvas');
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, width, height);
+
+      const resizedDataUrl = canvas.toDataURL('image/jpeg');
+
+      const resizedImg = new Image();
+      resizedImg.src = resizedDataUrl;
+      resizedImg.className = 'img-fluid rounded mb-3';
+      preview.appendChild(resizedImg);
+
+      const link = document.createElement('a');
+      link.href = resizedDataUrl;
+      link.download = 'resized_image.jpg';
+      link.className = 'btn btn-custom';
+      link.textContent = 'Download Resized Image';
+      preview.appendChild(link);
+    };
+    img.src = event.target.result;
+  };
+  reader.readAsDataURL(fileInput.files[0]);
+}
+  
+  
+// --- Images to PDF ---
+
+function convertImagesToPdf() {
+  const input = document.getElementById('imagesPdfInput');
+  const preview = document.getElementById('imagesPdfPreview');
+  preview.innerHTML = '';
+
+  if (!input.files.length) {
+    alert('Please upload some images.');
+    return;
+  }
+
+  const pdf = new jspdf.jsPDF();
+  let filesProcessed = 0;
+
+  Array.from(input.files).forEach((file, index) => {
+    const reader = new FileReader();
+    reader.onload = function(event) {
+      const img = new Image();
+      img.onload = function() {
+        const imgWidth = 210; // A4宽度（mm）
+        const imgHeight = (img.height * imgWidth) / img.width;
+
+        if (index !== 0) {
+          pdf.addPage();
+        }
+        pdf.addImage(img, 'JPEG', 0, 0, imgWidth, imgHeight);
+
+        // 同时预览小图
+        const smallPreview = new Image();
+        smallPreview.src = event.target.result;
+        smallPreview.style.maxWidth = '120px';
+        smallPreview.style.margin = '5px';
+        preview.appendChild(smallPreview);
+
+        filesProcessed++;
+        if (filesProcessed === input.files.length) {
+          pdf.save('images_converted.pdf');
+        }
+      };
+      img.src = event.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
 
 
 // --- PDF to JPG ---
