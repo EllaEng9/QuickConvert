@@ -239,6 +239,10 @@ function handleFileUpload(inputId, textareaId) {
   const reader = new FileReader();
   reader.onload = function(e) {
     document.getElementById(textareaId).value = e.target.result;
+    // ➡️ 如果是markdownInput，自动刷新预览！
+    if (textareaId === "markdownInput") {
+      convertMarkdownToHtml();
+    }
   };
   reader.readAsText(file);
 }
