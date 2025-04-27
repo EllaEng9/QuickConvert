@@ -12,6 +12,7 @@
   <script src="https://cdn.jsdelivr.net/npm/gif.js.optimized/dist/gif.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.4.2/mammoth.browser.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/js-beautify@1.14.0/js/lib/beautify-html.min.js"></script>
   <style>
     body {
       background: linear-gradient(to right, #83a4d4, #b6fbff);
@@ -212,6 +213,20 @@
     </div>
 
     <div class="section">
+  <h2 class="text-center mb-3">Format JSON & HTML</h2>
+
+  <textarea id="formatInput" placeholder="Paste JSON or HTML code here..."></textarea>
+
+  <div class="d-flex justify-content-center flex-wrap gap-2 mt-3">
+    <button onclick="formatJson()" class="btn btn-custom">Format JSON</button>
+    <button onclick="formatHtml()" class="btn btn-custom">Format HTML</button>
+  </div>
+
+  <div id="formatOutput" class="p-3 bg-light rounded mt-4" style="min-height:200px; white-space:pre-wrap;"></div>
+</div>
+
+
+    <div class="section">
   <h2 class="text-center mb-3">Text / Word / PDF Conversion</h2>
 
   <!-- 上传 TXT 或 DOCX -->
@@ -236,6 +251,18 @@
   <input type="file" id="pdfToTextInput" class="form-control mb-3" accept="application/pdf" onchange="extractTextFromPdf()" />
 
   <div id="pdfExtractedText" class="p-3 bg-light rounded" style="min-height:200px;"></div>
+</div>
+
+    <div class="section">
+  <h2 class="text-center mb-3">Word Count</h2>
+
+  <textarea id="wordCountInput" placeholder="Type or paste your text here..."></textarea>
+
+  <div class="mt-3 text-center">
+    <p><strong>Characters:</strong> <span id="charCount">0</span></p>
+    <p><strong>Words:</strong> <span id="wordCount">0</span></p>
+    <p><strong>Lines:</strong> <span id="lineCount">0</span></p>
+  </div>
 </div>
 
  
@@ -471,6 +498,36 @@ async function extractTextFromPdf() {
   }
 
   document.getElementById('pdfExtractedText').textContent = fullText;
+}
+
+  // --- Word Count ---
+document.getElementById('wordCountInput').addEventListener('input', function() {
+  const text = this.value;
+  document.getElementById('charCount').textContent = text.length;
+  document.getElementById('wordCount').textContent = text.trim() ? text.trim().split(/\s+/).length : 0;
+  document.getElementById('lineCount').textContent = text.split('\n').length;
+});
+
+  // --- Format JSON ---
+function formatJson() {
+  const input = document.getElementById('formatInput').value;
+  try {
+    const obj = JSON.parse(input);
+    document.getElementById('formatOutput').textContent = JSON.stringify(obj, null, 2);
+  } catch (error) {
+    alert('Invalid JSON!');
+  }
+}
+
+// --- Format HTML ---
+function formatHtml() {
+  const input = document.getElementById('formatInput').value;
+  try {
+    const formatted = html_beautify(input, { indent_size: 2 });
+    document.getElementById('formatOutput').textContent = formatted;
+  } catch (error) {
+    alert('Invalid HTML!');
+  }
 }
   
 // Markdown -> HTML
