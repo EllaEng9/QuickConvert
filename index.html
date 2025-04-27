@@ -178,6 +178,19 @@
   <!-- Text Conversion Tab -->
   <div id="textTab" class="tab-content hidden">
     <div class="section">
+  <h2 class="text-center mb-3">Merge PDFs</h2>
+  
+  <input type="file" id="mergePdfInput" class="form-control mb-3" accept="application/pdf" multiple />
+
+  <div class="d-flex justify-content-center">
+    <button onclick="mergePdfs()" class="btn btn-custom">Merge PDFs</button>
+  </div>
+
+  <div id="mergePdfPreview" class="mt-4 text-center"></div>
+</div>
+
+    
+    <div class="section">
       <h2 class="text-center mb-3">JSON ⇄ CSV ⇄ TXT Conversion</h2>
       <!-- For JSON/CSV/TXT -->
 <div class="mb-2">
@@ -245,6 +258,45 @@ function handleFileUpload(inputId, textareaId) {
 }
 
 // --- Text Conversions ---
+// --- Merge PDFs ---
+async function mergePdfs() {
+  const input = document.getElementById('mergePdfInput');
+  const preview = document.getElementById('mergePdfPreview');
+  preview.innerHTML = '';
+
+  if (!input.files.length) {
+    alert('Please upload at least two PDF files.');
+    return;
+  }
+
+  const pdfLibScript = document.createElement('script');
+  pdfLibScript.src = "https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js";
+  document.head.appendChild(pdfLibScript);
+
+  pdfLibScript.onload = async function() {
+    const { PDFDocument } = window.PDFLib;
+    const mergedPdf = await PDFDocument.create();
+
+    for (const file of input.files) {
+      const arrayBuffer = await file.arrayBuffer();
+      const pdf = await PDFDocument.load(arrayBuffer);
+      const copiedPages = await mergedPdf.copyPages(pdf, pdf.getPageIndices());
+      copiedPages.forEach(page => mergedPdf.addPage(page));
+    }
+
+    const mergedPdfBytes = await mergedPdf.save();
+    const blob = new Blob([mergedPdfBytes], { type: 'application/pdf' });
+    const url = URL.createObjectURL(blob);
+
+    const downloadLink = document.createElement('a');
+    downloadLink.href = url;
+    downloadLink.download = 'merged.pdf';
+    downloadLink.className = 'btn btn-custom';
+    downloadLink.textContent = 'Download Merged PDF';
+
+    preview.appendChild(downloadLink);
+  }
+}
 
 // JSON -> CSV
 function convertJsonToCsv() {
