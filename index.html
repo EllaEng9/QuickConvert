@@ -230,7 +230,7 @@ p.small.text-muted {
     </a>
 
     <a href="#imagesToPDFSection" class="tool-chip">
-      <i class="fas fa-file-upload"></i> Images to PDF
+      <i class="fas fa-file-upload"></i> Combine Images to PDF
     </a>
     </div>
   </div>
@@ -347,6 +347,26 @@ p.small.text-muted {
         <div id="imagesPdfPreview" class="preview d-flex flex-wrap justify-content-center"></div>
       </div>
     </div>
+
+    <!-- Image OCR (Extract Text) -->
+  <div class="col-12">
+  <div id="imageOcrSection" class="section">
+    <h2 class="text-center mb-3"><i class="fas fa-file-alt"></i> Image OCR (Extract Text from Images)</h2>
+
+    <input type="file" id="ocrFileInput" class="form-control mb-3" accept="image/png, image/jpeg" />
+
+    <p class="text-muted small text-center mt-2">
+      Supported formats: JPG, PNG. For best results, use clear, high-quality images with text.
+    </p>
+
+    <div class="text-center">
+      <button onclick="performOcr()" class="btn btn-custom mb-3">Extract Text</button>
+    </div>
+
+    <div id="ocrResult" class="p-3 bg-light rounded" style="min-height: 200px; overflow: auto;"></div>
+  </div>
+</div>
+
 
   </div>
 </div>
@@ -1196,6 +1216,43 @@ function convertPdfToJpg() {
   };
   reader.readAsArrayBuffer(file);
 }
+
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@4.0.2/dist/tesseract.min.js"></script>
+
+<script>
+function performOcr() {
+  const fileInput = document.getElementById('ocrFileInput');
+  const resultDiv = document.getElementById('ocrResult');
+
+  if (fileInput.files.length === 0) {
+    resultDiv.innerHTML = '<p class="text-danger">Please upload an image file first.</p>';
+    return;
+  }
+
+  resultDiv.innerHTML = '<p class="text-info">Extracting text... Please wait.</p>';
+
+  const file = fileInput.files[0];
+  const reader = new FileReader();
+
+  reader.onload = function(e) {
+    Tesseract.recognize(
+      e.target.result,
+      'eng', // 英文识别，可根据需要加 'chi_sim' 支持中文
+      {
+        logger: m => console.log(m) // 可选：显示进度
+      }
+    ).then(({ data: { text } }) => {
+      resultDiv.innerText = text.trim();
+    }).catch(err => {
+      console.error(err);
+      resultDiv.innerHTML = '<p class="text-danger">Error during OCR. Please try again.</p>';
+    });
+  };
+
+  reader.readAsDataURL(file);
+}
+</script>
+
 
 </script>
 
