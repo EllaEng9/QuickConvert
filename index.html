@@ -16,6 +16,8 @@
   <script src="https://cdn.jsdelivr.net/npm/js-beautify@1.14.0/js/lib/beautify-html.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/tesseract.js@4.0.2/dist/tesseract.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
   <style>
 /* 背景渐变更高级 */
 body {
@@ -1279,21 +1281,57 @@ let canvas = document.getElementById('signatureCanvas');
 let ctx = canvas.getContext('2d');
 let drawing = false;
 
-canvas.addEventListener('mousedown', () => drawing = true);
-canvas.addEventListener('mouseup', () => drawing = false);
-canvas.addEventListener('mouseout', () => drawing = false);
+
+canvas.addEventListener('mousedown', startDrawing);
+canvas.addEventListener('mouseup', stopDrawing);
+canvas.addEventListener('mouseout', stopDrawing);
 canvas.addEventListener('mousemove', drawSignature);
+
+canvas.addEventListener('touchstart', startDrawing);
+canvas.addEventListener('touchend', stopDrawing);
+canvas.addEventListener('touchmove', drawSignatureTouch);
+
+function startDrawing(e) {
+  drawing = true;
+  ctx.beginPath();
+  ctx.moveTo(getX(e), getY(e));
+}
+
+function stopDrawing() {
+  drawing = false;
+}
 
 function drawSignature(e) {
   if (!drawing) return;
   ctx.lineWidth = 2;
   ctx.lineCap = 'round';
   ctx.strokeStyle = '#333';
-
-  ctx.lineTo(e.offsetX, e.offsetY);
+  ctx.lineTo(getX(e), getY(e));
   ctx.stroke();
-  ctx.beginPath();
-  ctx.moveTo(e.offsetX, e.offsetY);
+}
+
+function drawSignatureTouch(e) {
+  e.preventDefault(); // 防止手机屏幕滑动
+  if (!drawing) return;
+  ctx.lineWidth = 2;
+  ctx.lineCap = 'round';
+  ctx.strokeStyle = '#333';
+  ctx.lineTo(getX(e), getY(e));
+  ctx.stroke();
+}
+
+function getX(e) {
+  if (e.touches) {
+    return e.touches[0].clientX - canvas.getBoundingClientRect().left;
+  }
+  return e.offsetX;
+}
+
+function getY(e) {
+  if (e.touches) {
+    return e.touches[0].clientY - canvas.getBoundingClientRect().top;
+  }
+  return e.offsetY;
 }
 
 function clearSignature() {
@@ -1306,7 +1344,7 @@ function downloadSignature() {
   link.download = 'signature.png';
   link.click();
 }
-
+  
 async function signPdf() {
   const pdfFile = document.getElementById('pdfToSignInput').files[0];
   if (!pdfFile) {
