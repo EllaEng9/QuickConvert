@@ -372,6 +372,38 @@ p.small.text-muted {
     <div id="ocrResult" class="p-3 bg-light rounded" style="min-height: 200px; overflow: auto;"></div>
   </div>
   </div>
+
+    <!-- Draw Signature -->
+<div class="col-12">
+  <div id="drawSignatureSection" class="section">
+    <h2 class="text-center mb-3"><i class="fas fa-pen-fancy"></i>Draw Signature</h2>
+
+    <canvas id="signatureCanvas" style="border: 2px dashed #ccc; width:100%; height:300px; border-radius:10px;"></canvas>
+
+    <div class="d-flex justify-content-center flex-wrap gap-2 mt-3">
+      <button onclick="clearSignature()" class="btn btn-custom">Clear</button>
+      <button onclick="downloadSignature()" class="btn btn-custom">Download Signature</button>
+    </div>
+  </div>
+</div>
+
+    <!-- Sign PDF -->
+<div class="col-12">
+  <div id="signPdfSection" class="section">
+    <h2 class="text-center mb-3"><i class="fas fa-file-signature"></i>Sign PDF</h2>
+
+    <input type="file" id="pdfToSignInput" class="form-control mb-3" accept="application/pdf" />
+
+    <p class="small text-center text-muted">Upload a PDF file. You'll place your saved signature on it.</p>
+
+    <div class="d-flex justify-content-center flex-wrap gap-2 mt-3">
+      <button onclick="signPdf()" class="btn btn-custom">Sign and Download PDF</button>
+    </div>
+
+    <div id="signPdfPreview" class="preview mt-3 text-center"></div>
+  </div>
+</div>
+
  
   </div>
 </div>
@@ -1241,6 +1273,80 @@ function performOcr() {
 
   reader.readAsDataURL(file);
 }
+
+// Draw Signature
+let canvas = document.getElementById('signatureCanvas');
+let ctx = canvas.getContext('2d');
+let drawing = false;
+
+canvas.addEventListener('mousedown', () => drawing = true);
+canvas.addEventListener('mouseup', () => drawing = false);
+canvas.addEventListener('mouseout', () => drawing = false);
+canvas.addEventListener('mousemove', drawSignature);
+
+function drawSignature(e) {
+  if (!drawing) return;
+  ctx.lineWidth = 2;
+  ctx.lineCap = 'round';
+  ctx.strokeStyle = '#333';
+
+  ctx.lineTo(e.offsetX, e.offsetY);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(e.offsetX, e.offsetY);
+}
+
+function clearSignature() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+}
+
+function downloadSignature() {
+  const link = document.createElement('a');
+  link.href = canvas.toDataURL('image/png');
+  link.download = 'signature.png';
+  link.click();
+}
+
+async function signPdf() {
+  const pdfFile = document.getElementById('pdfToSignInput').files[0];
+  if (!pdfFile) {
+    alert('Please upload a PDF first!');
+    return;
+  }
+
+  const reader = new FileReader();
+  reader.onload = async function(e) {
+    const pdfBytes = new Uint8Array(e.target.result);
+    const pdfDoc = await PDFLib.PDFDocument.load(pdfBytes);
+
+    // 读取签名图片
+    const signatureUrl = canvas.toDataURL('image/png');
+    const signatureImage = await pdfDoc.embedPng(signatureUrl);
+
+    const pages = pdfDoc.getPages();
+    const firstPage = pages[0];
+    const { width, height } = firstPage.getSize();
+
+    // 在第一页右下角插入签名
+    firstPage.drawImage(signatureImage, {
+      x: width - 150,
+      y: 50,
+      width: 100,
+      height: 50,
+    });
+
+    const modifiedPdfBytes = await pdfDoc.save();
+    const blob = new Blob([modifiedPdfBytes], { type: 'application/pdf' });
+    const url = URL.createObjectURL(blob);
+
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'signed_document.pdf';
+    link.click();
+  };
+  reader.readAsArrayBuffer(pdfFile);
+}
+
 
 
 </script>
