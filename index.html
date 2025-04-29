@@ -1281,6 +1281,9 @@ let canvas = document.getElementById('signatureCanvas');
 let ctx = canvas.getContext('2d');
 let drawing = false;
 
+// 关键：设置实际绘图尺寸
+canvas.width = canvas.offsetWidth;
+canvas.height = canvas.offsetHeight;
 
 canvas.addEventListener('mousedown', startDrawing);
 canvas.addEventListener('mouseup', stopDrawing);
