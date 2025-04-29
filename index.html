@@ -531,18 +531,6 @@ function showTab(tab) {
   }
 }
 
-// --- Text Conversions ---
-// --- Tab Switching ---
-function showTab(tab) {
-  document.getElementById('imageTab').classList.add('hidden');
-  document.getElementById('textTab').classList.add('hidden');
-  if (tab === 'image') {
-    document.getElementById('imageTab').classList.remove('hidden');
-  } else {
-    document.getElementById('textTab').classList.remove('hidden');
-  }
-}
-
 // --- Upload File for Text Conversion ---
 function handleFileUpload(inputId, textareaId) {
   const file = document.getElementById(inputId).files[0];
@@ -1218,7 +1206,6 @@ function convertPdfToJpg() {
   reader.readAsArrayBuffer(file);
 }
 
-<script>
 function performOcr() {
   const fileInput = document.getElementById('ocrFileInput');
   const resultDiv = document.getElementById('ocrResult');
@@ -1250,7 +1237,6 @@ function performOcr() {
 
   reader.readAsDataURL(file);
 }
-</script>
 
 
 </script>
