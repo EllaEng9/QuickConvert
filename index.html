@@ -1280,70 +1280,51 @@ let canvas = document.getElementById('signatureCanvas');
 let ctx = canvas.getContext('2d');
 let drawing = false;
 
-// ✅ 【新增】一定要初始化 canvas 的宽高，否则触摸板绘制会扭曲
-canvas.width = canvas.offsetWidth;
-canvas.height = canvas.offsetHeight;
+function getX(e) {
+  if (e.touches) {
+    return e.touches[0].clientX - canvas.getBoundingClientRect().left;
+  }
+  return e.offsetX;
+}
 
-// --- 添加鼠标事件 ---
-canvas.addEventListener('mousedown', startDrawing);   // ✔️ 和你原来一样
-canvas.addEventListener('mousemove', draw);           
-canvas.addEventListener('mouseup', stopDrawing);
-canvas.addEventListener('mouseout', stopDrawing);
+function getY(e) {
+  if (e.touches) {
+    return e.touches[0].clientY - canvas.getBoundingClientRect().top;
+  }
+  return e.offsetY;
+}
 
-// --- 添加触摸事件 ---
-canvas.addEventListener('touchstart', startDrawingTouch, { passive: false });  // ⚡ 改了，加了 passive: false
-canvas.addEventListener('touchmove', drawTouch, { passive: false });           // ⚡ 改了，加了 passive: false
-canvas.addEventListener('touchend', stopDrawing);
-
-// --- 鼠标版 ---
 function startDrawing(e) {
+  e.preventDefault();
   drawing = true;
   ctx.beginPath();
-  ctx.moveTo(e.offsetX, e.offsetY); 
+  ctx.moveTo(getX(e), getY(e));
 }
 
-function draw(e) {    
-  if (!drawing) return;
-  ctx.lineWidth = 2;
-  ctx.lineCap = 'round';
-  ctx.strokeStyle = '#333';
-  ctx.lineTo(e.offsetX, e.offsetY);
-  ctx.stroke();
-}
-
-function stopDrawing() {
+function stopDrawing(e) {
+  e.preventDefault();
   drawing = false;
 }
 
-// --- 触摸版 ---
-function startDrawingTouch(e) {  // ⚡ touchstart专用
-  e.preventDefault();  // 防止触控板滑动整个页面
-  drawing = true;
-  const { x, y } = getTouchPos(e);  // ⚡ 用新的 getTouchPos 来准确获取触摸点
-  ctx.beginPath();
-  ctx.moveTo(x, y);
-}
-
-function drawTouch(e) {  // ⚡ touchmove专用
-  e.preventDefault(); 
+function draw(e) {
+  e.preventDefault();
   if (!drawing) return;
-  const { x, y } = getTouchPos(e);
   ctx.lineWidth = 2;
   ctx.lineCap = 'round';
   ctx.strokeStyle = '#333';
-  ctx.lineTo(x, y);
+  ctx.lineTo(getX(e), getY(e));
   ctx.stroke();
 }
 
-// ✅ 【新增】专门处理触摸位置
-function getTouchPos(e) {
-  const rect = canvas.getBoundingClientRect();
-  const touch = e.touches[0];
-  return {
-    x: touch.clientX - rect.left,
-    y: touch.clientY - rect.top
-  };
-}
+// 注意这里，添加 passive: false
+canvas.addEventListener('mousedown', startDrawing);
+canvas.addEventListener('mouseup', stopDrawing);
+canvas.addEventListener('mouseout', stopDrawing);
+canvas.addEventListener('mousemove', draw);
+
+canvas.addEventListener('touchstart', startDrawing, { passive: false });
+canvas.addEventListener('touchend', stopDrawing, { passive: false });
+canvas.addEventListener('touchmove', draw, { passive: false });
 
 function clearSignature() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
