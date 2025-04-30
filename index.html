@@ -976,41 +976,7 @@ function compressImage() {
   reader.readAsDataURL(file);
 }
 
-// --- Crop Image with Cropper.js ---
-// --- Crop Image (优化版上传即裁剪) ---
-let cropper;
 
-document.getElementById("cropFileInput").addEventListener("change", function(event) {
-  const file = event.target.files[0];
-  const preview = document.getElementById("cropPreview");
-  const downloadArea = document.getElementById("cropDownload");
-  preview.innerHTML = "";
-  downloadArea.innerHTML = "";
-
-  if (!file) {
-    alert("Please upload an image.");
-    return;
-  }
-
-  const reader = new FileReader();
-  reader.onload = function(e) {
-    const img = new Image();
-    img.id = "cropImage";
-    img.src = e.target.result;
-    img.style.maxWidth = "100%";
-    img.style.borderRadius = "10px";
-    preview.appendChild(img);
-
-    if (cropper) {
-      cropper.destroy();
-    }
-    cropper = new Cropper(img, {
-      aspectRatio: NaN,
-      viewMode: 1,
-    });
-  };
-  reader.readAsDataURL(file);
-});
 
 function cropImage() {
   const downloadArea = document.getElementById("cropDownload");
