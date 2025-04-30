@@ -388,8 +388,8 @@ canvas {
     <canvas id="signatureCanvas" style="border: 2px dashed #ccc; width:100%; height:300px; border-radius:10px;"></canvas>
 
     <div class="d-flex justify-content-center flex-wrap gap-2 mt-3">
-      <button onclick="clearSignature()" class="btn btn-custom">Clear</button>
-      <button onclick="downloadSignature()" class="btn btn-custom">Download Signature</button>
+      <button id="clearButton" class="btn btn-custom">Clear</button>
+      <button id="downloadButton" class="btn btn-custom">Download Signature</button>
     </div>
   </div>
 </div>
@@ -1314,25 +1314,17 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // Clear the canvas
   
-  window.clearSignature = function() {
-      if (ctx) {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-      } else {
-        console.error("Context not defined");
-      }
-    }
+  // Event listeners for the buttons
+  document.getElementById('clearButton').addEventListener('click', function() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+  });
 
-  // Download the signature as PNG
-  window.downloadSignature = function() {
-    if (!canvas) {
-      console.error("Canvas is not defined.");
-      return;
-     }
+  document.getElementById('downloadButton').addEventListener('click', function() {
     const link = document.createElement('a');
     link.href = canvas.toDataURL('image/png');
     link.download = 'signature.png';
     link.click();
-    }
+  });
 });
 
   
