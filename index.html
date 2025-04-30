@@ -189,6 +189,11 @@ p.small.text-muted {
   font-size: 14px;
 }
 
+canvas {
+  touch-action: none;
+}
+
+
   </style>
 </head>
 
@@ -1279,6 +1284,9 @@ function performOcr() {
 let canvas = document.getElementById('signatureCanvas');
 let ctx = canvas.getContext('2d');
 let drawing = false;
+
+canvas.width = canvas.offsetWidth;
+canvas.height = canvas.offsetHeight;
 
 function getX(e) {
   if (e.touches) {
