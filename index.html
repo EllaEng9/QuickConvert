@@ -1247,16 +1247,19 @@ function performOcr() {
   reader.readAsDataURL(file);
 }
 
+// Declare canvas and ctx globally
 let canvas, ctx;
 let drawing = false;
+
 document.addEventListener('DOMContentLoaded', function () {
-  let canvas = document.getElementById('signatureCanvas');
+  // Initialize canvas and context
+  canvas = document.getElementById('signatureCanvas');
   console.log(canvas);  // Log the canvas element to check if it is found
 
   if (canvas) {
-    let ctx = canvas.getContext('2d');
-    let drawing = false;
+    ctx = canvas.getContext('2d');
 
+    // Set canvas size based on display size (for high DPI devices)
     canvas.width = canvas.offsetWidth * window.devicePixelRatio;
     canvas.height = canvas.offsetHeight * window.devicePixelRatio;
 
@@ -1312,14 +1315,21 @@ document.addEventListener('DOMContentLoaded', function () {
     console.error("Canvas element not found");
   }
 
-  // Clear the canvas
-  
   // Event listeners for the buttons
   document.getElementById('clearButton').addEventListener('click', function() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    if (ctx) {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    } else {
+      console.error("Canvas context not available");
+    }
   });
 
   document.getElementById('downloadButton').addEventListener('click', function() {
+    if (!canvas) {
+      console.error("Canvas is not defined.");
+      return;
+    }
+
     const link = document.createElement('a');
     link.href = canvas.toDataURL('image/png');
     link.download = 'signature.png';
