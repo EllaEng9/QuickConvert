@@ -1282,8 +1282,15 @@ function performOcr() {
 }
 
 let canvas = document.getElementById('signatureCanvas');
-let ctx = canvas.getContext('2d');
-let drawing = false;
+console.log(canvas);  // Log the canvas element
+
+if (canvas) {
+  let ctx = canvas.getContext('2d');
+  let drawing = false;
+  // continue with the rest of the code...
+} else {
+  console.error("Canvas element not found");
+}
 
 canvas.width = canvas.offsetWidth * window.devicePixelRatio;
 canvas.height = canvas.offsetHeight * window.devicePixelRatio;
