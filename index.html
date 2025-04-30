@@ -1281,19 +1281,70 @@ function performOcr() {
   reader.readAsDataURL(file);
 }
 
-let canvas = document.getElementById('signatureCanvas');
-console.log(canvas);  // Log the canvas element
 
-if (canvas) {
-  let ctx = canvas.getContext('2d');
-  let drawing = false;
-  // continue with the rest of the code...
-} else {
-  console.error("Canvas element not found");
-}
+document.addEventListener('DOMContentLoaded', function () {
+  let canvas = document.getElementById('signatureCanvas');
+  console.log(canvas);  // Log the canvas element to check if it is found
 
-canvas.width = canvas.offsetWidth * window.devicePixelRatio;
-canvas.height = canvas.offsetHeight * window.devicePixelRatio;
+  if (canvas) {
+    let ctx = canvas.getContext('2d');
+    let drawing = false;
+
+    canvas.width = canvas.offsetWidth * window.devicePixelRatio;
+    canvas.height = canvas.offsetHeight * window.devicePixelRatio;
+
+    function getX(e) {
+      if (e.touches) {
+        return e.touches[0].clientX - canvas.getBoundingClientRect().left;
+      }
+      return e.offsetX;
+    }
+
+    function getY(e) {
+      if (e.touches) {
+        return e.touches[0].clientY - canvas.getBoundingClientRect().top;
+      }
+      return e.offsetY;
+    }
+
+    function startDrawing(e) {
+      e.preventDefault();
+      drawing = true;
+      console.log('startDrawing', e);
+      ctx.beginPath();
+      ctx.moveTo(getX(e), getY(e));
+    }
+
+    function stopDrawing(e) {
+      e.preventDefault();
+      drawing = false;
+      console.log('stopDrawing', e);
+    }
+
+    function draw(e) {
+      e.preventDefault();
+      if (!drawing) return;
+      console.log('drawing', e);
+      ctx.lineWidth = 2;
+      ctx.lineCap = 'round';
+      ctx.strokeStyle = '#333';
+      ctx.lineTo(getX(e), getY(e));
+      ctx.stroke();
+    }
+
+    // Add event listeners for drawing on canvas
+    canvas.addEventListener('mousedown', startDrawing);
+    canvas.addEventListener('mouseup', stopDrawing);
+    canvas.addEventListener('mouseout', stopDrawing);
+    canvas.addEventListener('mousemove', draw);
+
+    canvas.addEventListener('touchstart', startDrawing, { passive: false });
+    canvas.addEventListener('touchend', stopDrawing, { passive: false });
+    canvas.addEventListener('touchmove', draw, { passive: false });
+  } else {
+    console.error("Canvas element not found");
+  }
+});
 
 
 function getX(e) {
@@ -1335,15 +1386,7 @@ function draw(e) {
   ctx.stroke();
 }
 
-// 注意这里，添加 passive: false
-canvas.addEventListener('mousedown', startDrawing);
-canvas.addEventListener('mouseup', stopDrawing);
-canvas.addEventListener('mouseout', stopDrawing);
-canvas.addEventListener('mousemove', draw);
 
-canvas.addEventListener('touchstart', startDrawing, { passive: false });
-canvas.addEventListener('touchend', stopDrawing, { passive: false });
-canvas.addEventListener('touchmove', draw, { passive: false });
 
 function clearSignature() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
