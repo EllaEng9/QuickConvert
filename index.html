@@ -1264,18 +1264,23 @@ document.addEventListener('DOMContentLoaded', function () {
     canvas.height = canvas.offsetHeight * window.devicePixelRatio;
 
     function getX(e) {
-      if (e.touches) {
-        return e.touches[0].clientX - canvas.getBoundingClientRect().left;
-      }
-      return e.offsetX;
-    }
+       const rect = canvas.getBoundingClientRect();  // Get the position of the canvas relative to the viewport
+       const scaleX = canvas.width / rect.width;  // Get the scaling factor in the X direction
+       if (e.touches) {
+         return (e.touches[0].clientX - rect.left) * scaleX;  // Adjust for scale
+        }
+       return (e.clientX - rect.left) * scaleX;  // Adjust for scale
+     }
 
     function getY(e) {
-      if (e.touches) {
-        return e.touches[0].clientY - canvas.getBoundingClientRect().top;
-      }
-      return e.offsetY;
-    }
+       const rect = canvas.getBoundingClientRect();  // Get the position of the canvas relative to the viewport
+       const scaleY = canvas.height / rect.height;  // Get the scaling factor in the Y direction
+       if (e.touches) {
+          return (e.touches[0].clientY - rect.top) * scaleY;  // Adjust for scale
+        }
+       return (e.clientY - rect.top) * scaleY;  // Adjust for scale
+     }
+
 
     function startDrawing(e) {
       e.preventDefault();
