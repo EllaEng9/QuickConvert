@@ -1247,7 +1247,8 @@ function performOcr() {
   reader.readAsDataURL(file);
 }
 
-
+let canvas, ctx;
+let drawing = false;
 document.addEventListener('DOMContentLoaded', function () {
   let canvas = document.getElementById('signatureCanvas');
   console.log(canvas);  // Log the canvas element to check if it is found
@@ -1312,76 +1313,27 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   // Clear the canvas
+  
   function clearSignature() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  }
+      if (ctx) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+      } else {
+        console.error("Context not defined");
+      }
+    }
 
   // Download the signature as PNG
   function downloadSignature() {
     if (!canvas) {
       console.error("Canvas is not defined.");
       return;
-  }
-
+     }
     const link = document.createElement('a');
     link.href = canvas.toDataURL('image/png');
     link.download = 'signature.png';
     link.click();
-}
+    }
 });
-
-
-function getX(e) {
-  if (e.touches) {
-    return e.touches[0].clientX - canvas.getBoundingClientRect().left;
-  }
-  return e.offsetX;
-}
-
-function getY(e) {
-  if (e.touches) {
-    return e.touches[0].clientY - canvas.getBoundingClientRect().top;
-  }
-  return e.offsetY;
-}
-
-function startDrawing(e) {
-  e.preventDefault();
-  drawing = true;
-  console.log('startDrawing', e);
-  ctx.beginPath();
-  ctx.moveTo(getX(e), getY(e));
-}
-
-function stopDrawing(e) {
-  e.preventDefault();
-  drawing = false;
-  console.log('stopDrawing', e);
-}
-
-function draw(e) {
-  e.preventDefault();
-  if (!drawing) return;
-  console.log('drawing', e);
-  ctx.lineWidth = 2;
-  ctx.lineCap = 'round';
-  ctx.strokeStyle = '#333';
-  ctx.lineTo(getX(e), getY(e));
-  ctx.stroke();
-}
-
-
-
-function clearSignature() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-}
-
-function downloadSignature() {
-  const link = document.createElement('a');
-  link.href = canvas.toDataURL('image/png');
-  link.download = 'signature.png';
-  link.click();
-}
 
   
 async function signPdf() {
