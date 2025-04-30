@@ -1285,8 +1285,9 @@ let canvas = document.getElementById('signatureCanvas');
 let ctx = canvas.getContext('2d');
 let drawing = false;
 
-canvas.width = canvas.offsetWidth;
-canvas.height = canvas.offsetHeight;
+canvas.width = canvas.offsetWidth * window.devicePixelRatio;
+canvas.height = canvas.offsetHeight * window.devicePixelRatio;
+
 
 function getX(e) {
   if (e.touches) {
@@ -1305,6 +1306,7 @@ function getY(e) {
 function startDrawing(e) {
   e.preventDefault();
   drawing = true;
+  console.log('startDrawing', e);
   ctx.beginPath();
   ctx.moveTo(getX(e), getY(e));
 }
@@ -1312,11 +1314,13 @@ function startDrawing(e) {
 function stopDrawing(e) {
   e.preventDefault();
   drawing = false;
+  console.log('stopDrawing', e);
 }
 
 function draw(e) {
   e.preventDefault();
   if (!drawing) return;
+  console.log('drawing', e);
   ctx.lineWidth = 2;
   ctx.lineCap = 'round';
   ctx.strokeStyle = '#333';
