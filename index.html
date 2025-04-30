@@ -1310,6 +1310,24 @@ document.addEventListener('DOMContentLoaded', function () {
   } else {
     console.error("Canvas element not found");
   }
+
+  // Clear the canvas
+  function clearSignature() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  }
+
+  // Download the signature as PNG
+  function downloadSignature() {
+    if (!canvas) {
+      console.error("Canvas is not defined.");
+      return;
+  }
+
+    const link = document.createElement('a');
+    link.href = canvas.toDataURL('image/png');
+    link.download = 'signature.png';
+    link.click();
+}
 });
 
 
