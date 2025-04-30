@@ -1314,7 +1314,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // Clear the canvas
   
-  function clearSignature() {
+  window.clearSignature = function() {
       if (ctx) {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
       } else {
@@ -1323,7 +1323,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
   // Download the signature as PNG
-  function downloadSignature() {
+  window.downloadSignature = function() {
     if (!canvas) {
       console.error("Canvas is not defined.");
       return;
