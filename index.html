@@ -1416,6 +1416,111 @@ async function signPdf() {
   reader.readAsArrayBuffer(pdfFile);
 }
 
+// ---- Analytics helper ----
+function trackToolUse(tool, action, extra = {}) {
+  if (window.gtag) {
+    gtag('event', 'tool_use', { tool, action, ...extra });
+  }
+  fetch('/api/log', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    keepalive: true,
+    body: JSON.stringify({ ts: Date.now(), tool, action, ...extra })
+  }).catch(()=>{});
+}
+
+// ---- Try on-device Gemini Nano (Chrome built-in AI) ----
+async function getOnDeviceModel() {
+  try {
+    const ai = window.ai || navigator.ai;
+    if (!ai || !ai.canCreateTextSession) return null;
+    const capability = await ai.canCreateTextSession();
+    if (capability !== 'readily' && capability !== 'after-download') return null;
+    return await ai.createTextSession();
+  } catch { return null; }
+}
+
+// ---- AI Chat ----
+let abortChat = new AbortController();
+document.getElementById('aiChatBtn').addEventListener('click', async () => {
+  const promptEl = document.getElementById('aiPrompt');
+  const outEl = document.getElementById('aiChatResult');
+  const prompt = (promptEl.value || '').trim();
+  if (!prompt) { alert('Please enter a prompt.'); return; }
+  outEl.textContent = 'Thinking...';
+  trackToolUse('ai_chat', 'invoke');
+
+  const onDevice = await getOnDeviceModel();
+  try {
+    if (onDevice) {
+      const reply = await onDevice.prompt(prompt);
+      outEl.textContent = reply || '(no response)';
+      trackToolUse('ai_chat', 'on_device_success');
+      return;
+    }
+    abortChat = new AbortController();
+    const res = await fetch('/api/gemini-text', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      signal: abortChat.signal,
+      body: JSON.stringify({ prompt })
+    });
+    if (!res.ok) throw new Error('Server error');
+    const data = await res.json();
+    outEl.textContent = data.text || '(no response)';
+    trackToolUse('ai_chat', 'cloud_success');
+  } catch (e) {
+    outEl.textContent = 'Error: ' + e.message;
+    trackToolUse('ai_chat', 'error', { message: String(e) });
+  }
+});
+document.getElementById('aiChatStopBtn').addEventListener('click', () => { try { abortChat.abort(); } catch {} });
+
+// ---- Image Edit ----
+const bananaInput = document.getElementById('bananaImageInput');
+bananaInput.addEventListener('change', () => {
+  const n = bananaInput?.files?.length || 0;
+  if (n > 0) trackToolUse('ai_image_edit', 'file_selected', { files: n });
+});
+
+document.getElementById('bananaEditBtn').addEventListener('click', async () => {
+  const file = bananaInput.files?.[0];
+  const instruction = (document.getElementById('bananaInstruction').value || '').trim();
+  const preview = document.getElementById('bananaPreview');
+  preview.innerHTML = '';
+  if (!file) return alert('Please upload an image.');
+  if (!instruction) return alert('Please enter your edit instruction.');
+
+  const origUrl = URL.createObjectURL(file);
+  const orig = new Image(); orig.src = origUrl; orig.className = 'img-fluid rounded mb-3'; orig.style.maxWidth = '280px';
+  const status = document.createElement('div'); status.textContent = 'Applying edit...';
+  preview.appendChild(status); preview.appendChild(orig);
+  trackToolUse('ai_image_edit', 'invoke', { instruction_len: instruction.length });
+
+  try {
+    const form = new FormData();
+    form.append('image', file);
+    form.append('instruction', instruction);
+
+    const res = await fetch('/api/gemini-image-edit', { method: 'POST', body: form });
+    if (!res.ok) throw new Error('Server error');
+    const blob = await res.blob();
+    const url = URL.createObjectURL(blob);
+
+    status.textContent = 'Done';
+    const edited = new Image(); edited.src = url; edited.className = 'img-fluid rounded mb-3';
+    preview.appendChild(edited);
+
+    const a = document.createElement('a');
+    a.href = url; a.download = 'edited.png'; a.className = 'btn btn-custom'; a.textContent = 'Download Edited Image';
+    preview.appendChild(a);
+trackToolUse('ai_image_edit', 'cloud_success');
+  } catch (e) {
+    status.textContent = 'Error: ' + e.message;
+    trackToolUse('ai_image_edit', 'error', { message: String(e) });
+  }
+});
+
 
 
 </script>
