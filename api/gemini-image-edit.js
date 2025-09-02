@@ -17,7 +17,7 @@ export default async function handler(req, res) {
     const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
     // Prefer an image-capable model, then fall back.
-    const candidates = ["gemini-2.5-flash-image", "gemini-2.5-flash", "gemini-1.5-flash"];
+    const candidates = ["gemini-2.5-flash-image-preview", "gemini-2.5-flash-image", "gemini-2.5-flash", "gemini-1.5-flash"];
     let response, used, lastErr;
     for (const name of candidates) {
       try {
