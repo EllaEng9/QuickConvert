@@ -207,6 +207,7 @@ canvas {
   <div class="text-center">
     <button class="btn btn-custom" onclick="showTab('image')">Image Tools</button>
     <button class="btn btn-custom" onclick="showTab('text')">Text Tools</button>
+    <button class="btn btn-custom" onclick="showTab('ai')">AI Tools</button>
   </div>
 
   <!-- Image Conversion Tab -->
@@ -547,6 +548,45 @@ canvas {
     </div>
   </div>
 
+  <!-- ========== AI TOOLS (Gemini) ========== -->
+<div id="aiTab" class="tab-content hidden">
+  <div id="aiToolsSection" class="section">
+  <h2 class="text-center mb-3"><i class="fas fa-robot"></i> AI Tools (Gemini)</h2>
+
+  <div class="chips-container">
+    <a href="#aiChatBox" class="tool-chip"><i class="fas fa-comments"></i> AI Chat</a>
+    <a href="#aiImageEdit" class="tool-chip"><i class="fas fa-wand-magic-sparkles"></i> Image Edit (Nano Banana)</a>
+  </div>
+
+  <!-- AI Chat -->
+  <div id="aiChatBox" class="mt-4">
+    <label for="aiPrompt">Ask anything:</label>
+    <textarea id="aiPrompt" placeholder="e.g., Summarize this text / draft an email / explain a JSON error..."></textarea>
+    <div class="d-flex justify-content-center flex-wrap gap-2">
+      <button id="aiChatBtn" class="btn btn-custom">Ask Gemini</button>
+      <button id="aiChatStopBtn" class="btn btn-custom">Stop</button>
+    </div>
+    <pre id="aiChatResult" class="mt-3" style="min-height:160px;"></pre>
+    <p class="small text-muted text-center mt-2">
+      Tip: If Chrome supports on-device Gemini Nano, we’ll use it; otherwise we call the server.
+    </p>
+  </div>
+
+  <hr class="my-4">
+
+    <!-- Image Edit -->
+  <div id="aiImageEdit">
+    <h3 class="mb-3 text-center"><i class="fas fa-image"></i> Edit Images with AI (Nano Banana)</h3>
+    <input type="file" id="bananaImageInput" class="form-control mb-3" accept="image/*" />
+    <textarea id="bananaInstruction" placeholder="Describe the edit (e.g., 'Remove background')"></textarea>
+    <div class="d-flex justify-content-center flex-wrap gap-2 mt-2">
+      <button id="bananaEditBtn" class="btn btn-custom">Apply Edit</button>
+    </div>
+    <div id="bananaPreview" class="preview text-center mt-3"></div>
+  </div>
+</div>
+
+
 </div> <!-- End of container -->
 
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
@@ -556,12 +596,16 @@ canvas {
 function showTab(tab) {
   document.getElementById('imageTab').classList.add('hidden');
   document.getElementById('textTab').classList.add('hidden');
+  document.getElementById('aiTab').classList.add('hidden');
   if (tab === 'image') {
     document.getElementById('imageTab').classList.remove('hidden');
-  } else {
+  } else if (tab === 'text') {
     document.getElementById('textTab').classList.remove('hidden');
+  } else if (tab === 'ai') {
+    document.getElementById('aiTab').classList.remove('hidden');
   }
 }
+
 
 // --- Upload File for Text Conversion ---
 function handleFileUpload(inputId, textareaId) {
