@@ -3,10 +3,7 @@
   "private": true,
   "type": "module",
   "dependencies": {
-    "@google/generative-ai": "^0.21.0"
-  },
-  "scripts": {
-    "dev": "vercel dev",
-    "start": "vercel dev"
+    "@google/generative-ai": "^0.21.0",
+    "busboy": "^1.6.0"
   }
 }
