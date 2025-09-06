@@ -207,6 +207,8 @@ canvas {
   <div class="text-center">
     <button class="btn btn-custom" onclick="showTab('image')">Image Tools</button>
     <button class="btn btn-custom" onclick="showTab('text')">Text Tools</button>
+    <button class="btn btn-custom" onclick="showTab('ocr')">OCR Tools</button>
+    <button class="btn btn-custom" onclick="showTab('esign')">eSignature Tools</button>
     <button class="btn btn-custom" onclick="showTab('ai')">AI Tools</button>
   </div>
 
@@ -369,6 +371,8 @@ canvas {
     </div>
 
     <!-- Image OCR (Extract Text) -->
+  <div id="ocrTab" class="tab-content hidden">
+  <div class="row">
   <div class="col-12">
   <div id="imageOcrSection" class="section">
     <h2 class="text-center mb-3"><i class="fas fa-eye"></i> Image OCR (Extract Text from Images)</h2>
@@ -386,8 +390,12 @@ canvas {
     <div id="ocrResult" class="p-3 bg-light rounded" style="min-height: 200px; overflow: auto;"></div>
   </div>
   </div>
+  </div>
+  </div>
 
     <!-- Draw Signature -->
+  <div id="esignTab" class="tab-content hidden">
+  <div class="row">
 <div class="col-12">
   <div id="drawSignatureSection" class="section">
     <h2 class="text-center mb-3"><i class="fas fa-pen-fancy"></i>Draw Signature</h2>
@@ -400,6 +408,8 @@ canvas {
     </div>
   </div>
 </div>
+  </div>
+  </div>
 
  
   </div>
@@ -594,16 +604,26 @@ canvas {
 <script>
 // --- Tab Switching ---
 function showTab(tab) {
-  document.getElementById('imageTab').classList.add('hidden');
-  document.getElementById('textTab').classList.add('hidden');
-  document.getElementById('aiTab').classList.add('hidden');
-  if (tab === 'image') {
-    document.getElementById('imageTab').classList.remove('hidden');
-  } else if (tab === 'text') {
-    document.getElementById('textTab').classList.remove('hidden');
-  } else if (tab === 'ai') {
-    document.getElementById('aiTab').classList.remove('hidden');
-  }
+  // Hide all tab panes
+  ['imageTab', 'textTab', 'aiTab', 'ocrTab', 'esignTab'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.classList.add('hidden');
+  });
+
+  // Map names to panes
+  const map = {
+    image: 'imageTab',
+    text:  'textTab',
+    ai:    'aiTab',
+    ocr:   'ocrTab',
+    esign: 'esignTab'
+  };
+
+  const target = map[tab];
+  if (target) document.getElementById(target).classList.remove('hidden');
+
+  // Optional: smooth scroll to top
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 
